@@ -1,6 +1,9 @@
 package com.skg
 
 import io.swagger.client.ApiClient
+import io.swagger.client.api.CustomersApi
+import io.swagger.client.api.FundingsourcesApi
+import io.swagger.client.model.FundingSourceListResponse
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
@@ -20,9 +23,24 @@ class TransfersController {
     }
 
     def create() {
-        ApiClient apiClient = new ApiClient()
+        ApiClient apiClient = session.apiClient
 
-        respond new Transfers(params)
+        FundingsourcesApi fundingsourcesApi = new FundingsourcesApi()
+        fundingsourcesApi.apiClient = apiClient
+        FundingSourceListResponse fundingSourceListResponse = fundingsourcesApi.getCustomerFundingSources(session.paymentProcessorId)
+        log.debug "#$actionName customer links $fundingSourceListResponse"
+        List bankList = []
+        log.debug "#$actionName customer links $fundingSourceListResponse.embedded.(funding-sources)"
+        List banksFromResponse = fundingSourceListResponse.embedded.("funding-sources")
+        banksFromResponse.each {
+            def bank = [:]
+            bank.id = it.id
+            bank.type = it.type
+            bank.name = it.name
+            bankList << bank
+        }
+        print bankList[0].id
+        respond new Transfers(params), model: [bankList:bankList]
     }
 
     @Transactional

@@ -22,43 +22,14 @@ class CustomerController {
     }
 
     def show(Customer customerInstance) {
-        ApiClient apiClient = new ApiClient();
-        apiClient.setBasePath(session.baseurl);
-        apiClient.setAccessToken(session.platformAccessToken);
+        log.info "$actionName"
+        ApiClient apiClient = session.apiClient
 
-        FormDataMultiPart postBody = null;
-print ']]]]]]'
-        print session.customerResourceId.toString()
+        log.debug "$actionName payment processor id $session.paymentProcessorId"
         CustomersApi customersApi = new CustomersApi()
         customersApi.apiClient = apiClient
-        IavToken iavToken = customersApi.getCustomerIavToken(session.customerResourceId.toString())
-        print iavToken
-
-//        String path = "/customers/{id}/funding-sources-token".replaceAll("\\{format\\}", "json").replaceAll("\\{id\\}", apiClient.escapeString(session.customerResourceId.toString()));
-//        HashMap queryParams = new HashMap();
-//        HashMap headerParams = new HashMap();
-//        HashMap formParams = new HashMap();
-//        String[] accepts = ["application/vnd.dwolla.v1.hal+json"];
-//        String accept = apiClient.selectHeaderAccept(accepts);
-//        String[] contentTypes = new String[0];
-//        String contentType = apiClient.selectHeaderContentType(contentTypes);
-//        if(contentType.startsWith("multipart/form-data")) {
-//            boolean ex = false;
-//            FormDataMultiPart mp = new FormDataMultiPart();
-//            if(ex) {
-//                postBody = mp;
-//            }
-//        }
-//        String[] authNames= ["oauth2"]
-//
-//        try {
-//            String ex1 = apiClient.invokeAPI(path, "POST", queryParams, postBody, headerParams, formParams, accept, contentType, authNames);
-//            return ex1 != null?(CustomerOAuthToken)apiClient.deserialize(ex1, "", CustomerOAuthToken.class):null;
-//        } catch (ApiException var14) {
-//            throw var14;
-//        }
-//        CustomerOAuthToken customerOAuthToken = customersApi.createFundingSourcesTokenForCustomer(session.customerResourceId)
-//        print customerOAuthToken
+        IavToken iavToken = customersApi.getCustomerIavToken(session.paymentProcessorId)
+        log.info "$actionName iavToken $iavToken"
 
         log.info "$actionName response:$response"
         respond customerInstance,model: [iavToken:iavToken.token]
@@ -75,23 +46,24 @@ print ']]]]]]'
             return
         }
 
-        if (customerInstance.hasErrors()) {
-            respond customerInstance.errors, view: 'create'
-            return
-        }
-        ApiClient a = new ApiClient();
-        a.setBasePath(session.baseurl);
-        a.setAccessToken(session.platformAccessToken);
+//        if (customerInstance.hasErrors()) {
+//            respond customerInstance.errors, view: 'create'
+//            return
+//        }
+        ApiClient apiClient = session.apiClient
 
-        CustomersApi c = new CustomersApi(a);
+        CustomersApi c = new CustomersApi(apiClient);
         CreateCustomer customer = new CreateCustomer()
         bindData(customer,customerInstance)
         Unit$ response = c.create(customer)
         log.info "$actionName response:$response"
 
-        session.customerResourceId = response.locationHeader
+//        session.customerResourceId = response.locationHeader
+        io.swagger.client.model.Customer customer1 = c.getCustomer(response.locationHeader)
+        print "$actionName customer Id :$customer1.id"
+        customerInstance.paymentProcessorId = customer1.id
         customerInstance.save flush: true
-
+        session.paymentProcessorId = customerInstance.paymentProcessorId
         log.info "$actionName customer created $customerInstance.email"
 
         request.withFormat {

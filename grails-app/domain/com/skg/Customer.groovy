@@ -15,6 +15,7 @@ class Customer {
     String dateOfBirth
     String ssn
     String phone
+    String paymentProcessorId
     Boolean verified = Boolean.FALSE
 
     static constraints = {

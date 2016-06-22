@@ -11,23 +11,14 @@
 
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: transfersInstance, field: 'created', 'error')} required">
-	<label for="created">
-		<g:message code="transfers.created.label" default="Created" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:textField name="created" required="" value="${transfersInstance?.created}"/>
+%{--<div class="fieldcontain ${hasErrors(bean: transfersInstance, field: 'currency', 'error')} required">--}%
+	%{--<label for="currency">--}%
+		%{--<g:message code="transfers.currency.label" default="Currency" />--}%
+		%{--<span class="required-indicator">*</span>--}%
+	%{--</label>--}%
+	%{--<g:textField name="currency" required="" value="${transfersInstance?.currency}"/>--}%
 
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: transfersInstance, field: 'currency', 'error')} required">
-	<label for="currency">
-		<g:message code="transfers.currency.label" default="Currency" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:textField name="currency" required="" value="${transfersInstance?.currency}"/>
-
-</div>
+%{--</div>--}%
 
 <div class="fieldcontain ${hasErrors(bean: transfersInstance, field: 'destinationId', 'error')} required">
 	<label for="destinationId">
@@ -52,7 +43,11 @@
 		<g:message code="transfers.fundingSourceId.label" default="Funding Source Id" />
 		<span class="required-indicator">*</span>
 	</label>
-	<g:textField name="fundingSourceId" required="" value="${transfersInstance?.fundingSourceId}"/>
+	<select id="bank" name="bank" value="${it?.name}">
+		<g:each in="${bankList}" var="bank">
+			<option value="${bank?.id}">${bank?.name}</option>
+		</g:each>
+	</select>
 
 </div>
 
