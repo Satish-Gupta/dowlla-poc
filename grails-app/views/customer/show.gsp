@@ -165,13 +165,28 @@
 			</g:form>
 		</div>
 	<script type="text/javascript">
-		$('#start').click(function() {
+		/*$('#start').click(function() {
 			var iavToken = '${iavToken}';
 			dwolla.configure('uat');
 			dwolla.iav.start('iavContainer', iavToken, function(err, res) {
 				console.log('Error: ' + JSON.stringify(err) + ' -- Response: ' + JSON.stringify(res));
 			});
-		});
+		});*/
+		$('#start').click(function() {
+			 var iavToken = '${iavToken}';
+			 dwolla.configure('uat');
+			dwolla.iav.start(iavToken, {
+				container: 'iavContainer',
+				stylesheets: [
+					'http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext',
+					'http://myapp.com/iav/customStylesheet.css'
+				],
+				microDeposits: true,
+				fallbackToMicroDeposits: true
+			}, function(err, res) {
+				console.log('Error: ' + JSON.stringify(err) + ' -- Response: ' + JSON.stringify(res))
+			})
+		})
 	</script>
 	</body>
 </html>

@@ -9,7 +9,7 @@ class HomeController {
     def index() {
         ApiClient apiClient = new ApiClient();
         apiClient.setBasePath("https://api-uat.dwolla.com");
-        apiClient.setAccessToken("7l1nyPCWS08PRjHs0l8MWH3Bxzn7eek469shVMtZjcZyWLNruF");
+        apiClient.setAccessToken("0ckGprG2acJqptwbtzSPufMw7Ha5SZyjK2dxUYNYmS3NSQXdWL");
         session.apiClient = apiClient
         render view: '/index'
     }
