@@ -18,15 +18,6 @@
 
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: customerInstance, field: 'ipAddress', 'error')} required">
-	<label for="ipAddress">
-		<g:message code="customer.ipAddress.label" default="Ip Address" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:textField name="ipAddress" required="" value="${customerInstance?.ipAddress}"/>
-
-</div>
-
 <div class="fieldcontain ${hasErrors(bean: customerInstance, field: 'lastName', 'error')} required">
 	<label for="lastName">
 		<g:message code="customer.lastName.label" default="Last Name" />

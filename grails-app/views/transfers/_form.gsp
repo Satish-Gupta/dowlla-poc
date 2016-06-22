@@ -20,22 +20,12 @@
 
 %{--</div>--}%
 
-<div class="fieldcontain ${hasErrors(bean: transfersInstance, field: 'destinationId', 'error')} required">
-	<label for="destinationId">
-		<g:message code="transfers.destinationId.label" default="Destination Id" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:textField name="destinationId" required="" value="${transfersInstance?.destinationId}"/>
-
-</div>
-
 <div class="fieldcontain ${hasErrors(bean: transfersInstance, field: 'fee', 'error')} required">
 	<label for="fee">
 		<g:message code="transfers.fee.label" default="Fee" />
 		<span class="required-indicator">*</span>
 	</label>
 	<g:field name="fee" value="${fieldValue(bean: transfersInstance, field: 'fee')}" required=""/>
-
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: transfersInstance, field: 'fundingSourceId', 'error')} required">
@@ -43,29 +33,10 @@
 		<g:message code="transfers.fundingSourceId.label" default="Funding Source Id" />
 		<span class="required-indicator">*</span>
 	</label>
-	<select id="bank" name="bank" value="${it?.name}">
+	<select id="bank" name="fundingSource" value="${it?.name}">
 		<g:each in="${bankList}" var="bank">
 			<option value="${bank?.id}">${bank?.name}</option>
 		</g:each>
 	</select>
-
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: transfersInstance, field: 'status', 'error')} required">
-	<label for="status">
-		<g:message code="transfers.status.label" default="Status" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:textField name="status" required="" value="${transfersInstance?.status}"/>
-
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: transfersInstance, field: 'txnId', 'error')} required">
-	<label for="txnId">
-		<g:message code="transfers.txnId.label" default="Txn Id" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:textField name="txnId" required="" value="${transfersInstance?.txnId}"/>
-
 </div>
 

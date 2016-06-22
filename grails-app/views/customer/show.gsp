@@ -159,8 +159,7 @@
 				<div id="iavContainer"></div>
 				<fieldset class="buttons">
 					<g:link class="edit" action="edit" resource="${customerInstance}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-					<g:link class="edit" controller="transfers" action="sendMoney" resource="${customerInstance}"><g:message code="default.button.edit.label" default="Send Money" /></g:link>
-					<g:link class="edit" controller="fundingSource" action="create" params="[iavToken:'${iavToken}']" resource="${customerInstance}"><g:message code="default.button.edit.label" default="Link Bank" /></g:link>
+						<g:link class="edit" controller="transfers" action="create">Send Money</g:link>
 					<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
 				</fieldset>
 			</g:form>

@@ -11,5 +11,7 @@ class Transfers {
     String destinationId
 
     static constraints = {
+        status nullable: true
+        txnId nullable: true
     }
 }

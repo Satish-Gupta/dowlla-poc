@@ -62,7 +62,8 @@ class CustomerController {
         io.swagger.client.model.Customer customer1 = c.getCustomer(response.locationHeader)
         print "$actionName customer Id :$customer1.id"
         customerInstance.paymentProcessorId = customer1.id
-        customerInstance.save flush: true
+        customerInstance.ipAddress = "1.1.1.1"
+        customerInstance.save flush: true,failOnError: true
         session.paymentProcessorId = customerInstance.paymentProcessorId
         log.info "$actionName customer created $customerInstance.email"
 
