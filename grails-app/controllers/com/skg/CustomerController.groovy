@@ -25,10 +25,10 @@ class CustomerController {
         log.info "$actionName"
         ApiClient apiClient = session.apiClient
 
-        log.debug "$actionName payment processor id $session.paymentProcessorId"
+        log.debug "$actionName payment processor id $customerInstance.paymentProcessorId"
         CustomersApi customersApi = new CustomersApi()
         customersApi.apiClient = apiClient
-        IavToken iavToken = customersApi.getCustomerIavToken(session.paymentProcessorId)
+        IavToken iavToken = customersApi.getCustomerIavToken(customerInstance.paymentProcessorId)
         log.info "$actionName iavToken $iavToken"
 
         log.info "$actionName response:$response"

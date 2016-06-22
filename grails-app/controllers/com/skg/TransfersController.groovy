@@ -28,12 +28,12 @@ class TransfersController {
         respond transfersInstance
     }
 
-    def create() {
+    def create(Customer customerInstance) {
         ApiClient apiClient = session.apiClient
 
         FundingsourcesApi fundingsourcesApi = new FundingsourcesApi()
         fundingsourcesApi.apiClient = apiClient
-        FundingSourceListResponse fundingSourceListResponse = fundingsourcesApi.getCustomerFundingSources(session.paymentProcessorId)
+        FundingSourceListResponse fundingSourceListResponse = fundingsourcesApi.getCustomerFundingSources(customerInstance.paymentProcessorId)
         log.debug "#$actionName customer links $fundingSourceListResponse"
         List bankList = []
         log.debug "#$actionName customer links $fundingSourceListResponse.embedded.(funding-sources)"
