@@ -24,35 +24,37 @@
 			<thead>
 					<tr>
 					
-						<g:sortableColumn property="accountNumber" title="${message(code: 'fundingSource.accountNumber.label', default: 'Account Number')}" />
+						<g:sortableColumn property="id" title="${message(code: 'fundingSource.accountNumber.label', default: 'Account Number')}" />
 					
-						<g:sortableColumn property="accountType" title="${message(code: 'fundingSource.accountType.label', default: 'Account Type')}" />
+						<g:sortableColumn property="type" title="${message(code: 'fundingSource.accountType.label', default: 'Account Type')}" />
 					
 						<g:sortableColumn property="name" title="${message(code: 'fundingSource.name.label', default: 'Name')}" />
-					
-						<g:sortableColumn property="routingNumber" title="${message(code: 'fundingSource.routingNumber.label', default: 'Routing Number')}" />
-					
+
+						<g:sortableColumn property="status" title="${message(code: 'fundingSource.name.label', default: 'Status')}" />
+
+						<g:sortableColumn property="name" title="${message(code: 'fundingSource.name.label', default: 'action')}" />
 					</tr>
 				</thead>
 				<tbody>
-				<g:each in="${fundingSourceInstanceList}" status="i" var="fundingSourceInstance">
+				<g:each in="${bankList}" status="i" var="bank">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-					
-						<td><g:link action="show" id="${fundingSourceInstance.id}">${fieldValue(bean: fundingSourceInstance, field: "accountNumber")}</g:link></td>
-					
-						<td>${fieldValue(bean: fundingSourceInstance, field: "accountType")}</td>
-					
-						<td>${fieldValue(bean: fundingSourceInstance, field: "name")}</td>
-					
-						<td>${fieldValue(bean: fundingSourceInstance, field: "routingNumber")}</td>
-					
+
+						<td><g:link action="show" id="${bank.id}">${bank.id}</g:link></td>
+
+						<td>${bank.name}</td>
+
+						<td>${bank.type}</td>
+
+						<td>${bank.status}</td>
+						<td>
+							<g:if test="${bank.status == "unverified"}">
+								<g:link controller="fundingSource" action="showDeposit" params="${[bankId:bank.id,customerId:customerInstance.id]}">Verify</g:link>
+							</g:if>
+						</td>
 					</tr>
 				</g:each>
 				</tbody>
 			</table>
-			<div class="pagination">
-				<g:paginate total="${fundingSourceInstanceCount ?: 0}" />
-			</div>
 		</div>
 	</body>
 </html>

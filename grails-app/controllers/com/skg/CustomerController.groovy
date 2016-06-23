@@ -41,6 +41,7 @@ class CustomerController {
 
     @Transactional
     def save(Customer customerInstance) {
+        log.debug "#$actionName params:[$params]"
         if (customerInstance == null) {
             notFound()
             return

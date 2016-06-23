@@ -4,10 +4,13 @@ import io.swagger.client.ApiClient
 import io.swagger.client.api.CustomersApi
 import io.swagger.client.api.FundingsourcesApi
 import io.swagger.client.api.RootApi
+import io.swagger.client.model.Amount
 import io.swagger.client.model.CreateCustomer
 import io.swagger.client.model.CustomerOAuthToken
+import io.swagger.client.model.FundingSourceListResponse
 import io.swagger.client.model.IavToken
 import io.swagger.client.model.Unit$
+import io.swagger.client.model.VerifyMicroDepositsRequest
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
@@ -17,13 +20,49 @@ class FundingSourceController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond FundingSource.list(params), model: [fundingSourceInstanceCount: FundingSource.count()]
+    def index(Customer customerInstance) {
+        customerInstance= customerInstance?:chainModel?.customerInstance
+        ApiClient apiClient = session.apiClient
+        FundingsourcesApi fundingsourcesApi = new FundingsourcesApi()
+        fundingsourcesApi.apiClient = apiClient
+        print customerInstance
+        FundingSourceListResponse fundingSourceListResponse = fundingsourcesApi.getCustomerFundingSources(customerInstance.paymentProcessorId)
+        log.debug "#$actionName funding source response $fundingSourceListResponse"
+        List bankList = []
+        List banksFromResponse = fundingSourceListResponse.embedded.("funding-sources")
+        banksFromResponse.each {
+            def bank = [:]
+            bank.id = it.id
+            bank.type = it.type
+            bank.name = it.name
+            bank.status = it.status
+            bankList << bank
+        }
+        print bankList[0].id
+        respond new Transfers(params), model: [customerInstance:customerInstance,bankList:bankList]
     }
 
     def show(FundingSource fundingSourceInstance) {
         respond fundingSourceInstance
+    }
+
+    def showDeposit() {
+        log.info "#$actionName showing deposit page params[${params}]"
+        render view: "show-deposit", model: [bankId:params.bankId, customerId: params.customerId]
+    }
+
+    def verifyDeposit() {
+        log.debug "#$actionName params:$params"
+
+        FundingsourcesApi fundingsourcesApi = new FundingsourcesApi()
+        fundingsourcesApi.apiClient = session.apiClient
+        VerifyMicroDepositsRequest verifyMicroDepositsRequest = new VerifyMicroDepositsRequest()
+        verifyMicroDepositsRequest.amount1 = new Amount(value: params.amount1, currency: "USD")
+        verifyMicroDepositsRequest.amount2 = new Amount(value: params.amount2, currency: "USD")
+        fundingsourcesApi.microDeposits(verifyMicroDepositsRequest, params.bankId)
+        Customer customerInstance = Customer.get(params.customerId)
+        print customerInstance
+        chain action: "index", model:[customerInstance: customerInstance]
     }
 
     def create() {
