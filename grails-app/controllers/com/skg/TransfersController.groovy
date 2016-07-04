@@ -1,14 +1,18 @@
 package com.skg
 
+import com.sun.jersey.multipart.FormDataMultiPart
 import io.swagger.client.ApiClient
+import io.swagger.client.ApiException
 import io.swagger.client.api.CustomersApi
 import io.swagger.client.api.FundingsourcesApi
 import io.swagger.client.api.TransfersApi
 import io.swagger.client.model.Amount
+import io.swagger.client.model.Fee
 import io.swagger.client.model.FundingSourceListResponse
 import io.swagger.client.model.HalLink
 import io.swagger.client.model.Transfer
 import io.swagger.client.model.TransferRequestBody
+import io.swagger.client.model.TransferRequestWithFeeBody
 import io.swagger.client.model.Unit$
 
 import static org.springframework.http.HttpStatus.*
@@ -19,12 +23,23 @@ class TransfersController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
+    def thirdPartyService
+
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         respond Transfers.list(params), model: [transfersInstanceCount: Transfers.count()]
     }
 
     def show(Transfers transfersInstance) {
+        TransfersApi transfersApi = new TransfersApi()
+        transfersApi.apiClient = session.apiClient
+        Transfer transfer = transfersApi.byId(session.transactionId)
+        print transfer.id
+        transfersInstance.txnId = transfer.id
+        transfersInstance.amount = new BigDecimal(transfer.amount.value)
+        transfersInstance.created = transfer.created
+        transfersInstance.status = transfer.status
+//        transfersInstance.save(flush: true, failOnError: true)
         respond transfersInstance
     }
 
@@ -65,23 +80,36 @@ class TransfersController {
         TransfersApi transfersApi = new TransfersApi()
         transfersApi.apiClient = session.apiClient
 
-        TransferRequestBody transferRequestBody = new TransferRequestBody()
-        HalLink halLink = new HalLink()
-        halLink.href = "https://api-uat.dwolla.com/funding-sources/$params.fundingSource"
-        HalLink halLinkDestination = new HalLink()
-        halLinkDestination.href ="https://api-uat.dwolla.com/accounts/4cb5bac6-5bbe-44d3-a33f-bc2d3cab031b"
+        TransferRequestWithFeeBody transferRequestBody = new TransferRequestWithFeeBody()
+        HalLink sourceHalLink = new HalLink()
+        sourceHalLink.href = "https://api-uat.dwolla.com/funding-sources/$params.fundingSource"
+        HalLink destinationHalDestination = new HalLink()
+        destinationHalDestination.href ="https://api-uat.dwolla.com/accounts/4cb5bac6-5bbe-44d3-a33f-bc2d3cab031b"
 
-        transferRequestBody.links.put("source",halLink)
-        transferRequestBody.links.put("destination",halLinkDestination)
+        HalLink feeHalLink = new HalLink()
+        feeHalLink.href = "https://api-uat.dwolla.com/accounts/4cb5bac6-5bbe-44d3-a33f-bc2d3cab031b"
+        Amount feeAmount = new Amount()
+        feeAmount.value = params.fee
+        feeAmount.currency = "USD"
+        Fee fee = new Fee();
+        fee.links.put("charge-to",feeHalLink)
+        fee.amount = feeAmount
+        transferRequestBody.fees << fee
+
+        transferRequestBody.links.put("source",sourceHalLink)
+        transferRequestBody.links.put("destination",destinationHalDestination)
+
         Amount amount = new Amount()
         amount.currency = "USD"
         amount.value = params.amount
         transferRequestBody.amount = amount
         print transferRequestBody
-        Unit$ unit = transfersApi.create(transferRequestBody)
-        print unit
+        def unit = thirdPartyService.createTxn(transferRequestBody, transfersApi.apiClient)
+        log.info "$actionName txn created id: $unit.locationHeader"
 
-//        transferRequestBody.links.put("destination",)
+
+        session.transactionId = unit.locationHeader
+        //put dummy data
         transfersInstance.txnId = "kdlkdl"
         transfersInstance.created = "kdlkdl"
         transfersInstance.fee = 2
