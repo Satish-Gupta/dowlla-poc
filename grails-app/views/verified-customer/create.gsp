@@ -31,7 +31,6 @@
 				</fieldset>
 				<fieldset class="buttons">
 					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
-					<g:submitButton name="verify" class="save" value="${message(code: 'default.button.create.label1', default: 'Verify')}" />
 				</fieldset>
 			</g:form>
 		</div>

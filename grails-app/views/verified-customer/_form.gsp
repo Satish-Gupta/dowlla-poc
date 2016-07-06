@@ -34,7 +34,7 @@
 		<g:message code="customer.lastName.label" default="Address " />
 		<span class="required-indicator">*</span>
 	</label>
-	<g:textField name="address1" required="" value="99-99 33rd St"/>
+	<g:textField name="address1" required="" value="${customerInstance?.address1}"/>
 
 </div>
 
@@ -44,7 +44,7 @@
 		<g:message code="customer.lastName.label" default="City" />
 		<span class="required-indicator">*</span>
 	</label>
-	<g:textField name="city" required="" value="some city"/>
+	<g:textField name="city" required="" value="${customerInstance?.city}"/>
 
 </div>
 
@@ -54,7 +54,7 @@
 		<g:message code="customer.lastName.label" default="State" />
 		<span class="required-indicator">*</span>
 	</label>
-	<g:textField name="state" required="" value="CA"/>
+	<g:textField name="state" required="" value="${customerInstance?.state}"/>
 
 </div>
 
@@ -64,7 +64,7 @@
 		<g:message code="customer.lastName.label" default="Ssn" />
 		<span class="required-indicator">*</span>
 	</label>
-	<g:textField name="ssn" required="" value="1234"/>
+	<g:textField name="ssn" required="" value="${customerInstance?.ssn}"/>
 
 </div>
 
@@ -74,7 +74,7 @@
 		<g:message code="customer.lastName.label" default="Postal Code" />
 		<span class="required-indicator">*</span>
 	</label>
-	<g:textField name="postalCode" required="" value="530016"/>
+	<g:textField name="postalCode" required="" value="${customerInstance?.postalCode}"/>
 
 </div>
 
@@ -84,7 +84,7 @@
 		<g:message code="customer.lastName.label" default="Date Of Birth" />
 		<span class="required-indicator">*</span>
 	</label>
-	<g:textField name="dateOfBirth" required="" value="1999-01-01"/>
+	<g:textField name="dateOfBirth" required="" value="${customerInstance?.dateOfBirth}"/>
 
 </div>
 
@@ -94,17 +94,6 @@
 		<g:message code="customer.lastName.label" default="Phone" />
 		<span class="required-indicator">*</span>
 	</label>
-	<g:textField name="phone" required="" value="1234567890"/>
-
-</div>
-
-
-
-<div class="fieldcontain ${hasErrors(bean: customerInstance, field: 'type', 'error')} required">
-	<label for="lastName">
-		<g:message code="customer.lastName.label" default="Type" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:textField name="type" required="" value="personal"/>
+	<g:textField name="phone" required="" value="${customerInstance?.phone}"/>
 
 </div>

@@ -31,8 +31,10 @@ class CustomerController {
         IavToken iavToken = customersApi.getCustomerIavToken(customerInstance.paymentProcessorId)
         log.info "$actionName iavToken $iavToken"
 
+        io.swagger.client.model.Customer customer = customersApi.getCustomer(customerInstance.paymentProcessorId)
+
         log.info "$actionName response:$response"
-        respond customerInstance,model: [iavToken:iavToken.token]
+        respond customerInstance,model: [iavToken:iavToken.token, customerStatus: customer.status]
     }
 
     def create() {
@@ -54,15 +56,30 @@ class CustomerController {
         ApiClient apiClient = session.apiClient
 
         CustomersApi c = new CustomersApi(apiClient);
-        CreateCustomer customer = new CreateCustomer()
-        bindData(customer,customerInstance)
-        Unit$ response = c.create(customer)
-        log.info "$actionName response:$response"
+        Unit$ response
+        io.swagger.client.model.Customer updatedCustomer
+        io.swagger.client.model.Customer createdCustomer
+        if(params.create) {
+            log.info "#$actionName creating customer"
+            CreateCustomer customer = new CreateCustomer()
+            bindData(customer, customerInstance)
+            response = c.create(customer)
+            log.info "$actionName response:$response"
 
 //        session.customerResourceId = response.locationHeader
-        io.swagger.client.model.Customer customer1 = c.getCustomer(response.locationHeader)
-        print "$actionName customer Id :$customer1.id"
-        customerInstance.paymentProcessorId = customer1.id
+            createdCustomer = c.getCustomer(response.locationHeader)
+            print "$actionName customer Id :$createdCustomer.id"
+            customerInstance.paymentProcessorId = createdCustomer.id
+        } else {
+            log.info "#$actionName verifying customer"
+            UpdateCustomer customer = new UpdateCustomer()
+            bindData(customer, customerInstance)
+            updatedCustomer = c.updateCustomer(customer, session.paymentProcessorId)
+            log.info "$actionName response:$updatedCustomer"
+            customerInstance.paymentProcessorId = updatedCustomer.id
+        }
+
+
         customerInstance.ipAddress = "1.1.1.1"
         customerInstance.save flush: true,failOnError: true
         session.paymentProcessorId = customerInstance.paymentProcessorId
@@ -75,6 +92,14 @@ class CustomerController {
             }
             '*' { respond customerInstance, [status: CREATED] }
         }
+    }
+
+    def verify() {
+        redirect action: "create"
+    }
+
+    def addDocument() {
+        render view: "document"
     }
 
     def edit(Customer customerInstance) {

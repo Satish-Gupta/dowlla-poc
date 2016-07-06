@@ -161,8 +161,6 @@
 					%{--<g:link class="edit" action="edit" resource="${customerInstance}"><g:message code="default.button.edit.label" default="Edit" /></g:link>--}%
 					<g:link controller="transfers" action="create" id="${customerInstance.id}">Send Money</g:link>
 					<g:link controller="fundingSource" action="index" id="${customerInstance.id}">Bank list</g:link>
-					<g:link controller="customer" action="verify" id="${customerInstance.id}">Verify</g:link>
-					<g:link controller="customer" action="addDocument" id="${customerInstance.id}">Add Document</g:link>
 					%{--<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />--}%
 				</fieldset>
 			</g:form>
